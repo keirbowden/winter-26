@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <description>Displays a confirmation dialog for the user to confirm if they wish to proceed.</description>
+        <name>Confirm_Delete</name>
+        <label>Confirm Delete</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>c:confirmDialogLocalAction</actionName>
+        <actionType>lwcComponent</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>ContactInformation</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>c:confirmDialogLocalAction</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <customProperties>
+        <name>ScreenProgressIndicator</name>
+        <value>
+            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+        </value>
+    </customProperties>
+    <dynamicChoiceSets>
+        <description>Collection choice containing all contafts</description>
+        <name>ContactsChoice</name>
+        <collectionReference>Get_Contacts</collectionReference>
+        <dataType>String</dataType>
+        <displayField>Name</displayField>
+        <object>Contact</object>
+        <valueField>Id</valueField>
+    </dynamicChoiceSets>
+    <environments>Default</environments>
+    <formulas>
+        <description>Contact information for use in the confirmation modal.</description>
+        <name>ContactInformation</name>
+        <dataType>String</dataType>
+        <expression>&apos;Are you sure you want to delete the contact record for &apos; +  {!Get_Contact_Record.Name} + &apos;, who is the &apos; + {!Get_Contact_Record.Title} + &apos; at &apos; + {!Get_Contact_Record.Account.Name}</expression>
+    </formulas>
+    <interviewLabel>Local Actions {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Local Actions</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_Contact_Record</name>
+        <label>Get Contact Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Confirm_Delete</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Contact_Picklist</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Queries all contacts in the system.</description>
+        <name>Get_Contacts</name>
+        <label>Get Contacts</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Choose_your_contact</targetReference>
+        </connector>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Contact</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <sortField>Name</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <description>Allows the user to choose the contact to delete.</description>
+        <name>Choose_your_contact</name>
+        <label>Choose your contact</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>Get_Contact_Record</targetReference>
+        </connector>
+        <fields>
+            <name>Contact_Picklist</name>
+            <choiceReferences>ContactsChoice</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Contact Picklist</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Contacts</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <description>Has the user confirmed they wish to delete the chosen contact?</description>
+        <name>Confirmed</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+</Flow>
